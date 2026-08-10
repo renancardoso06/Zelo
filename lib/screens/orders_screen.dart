@@ -107,6 +107,21 @@ class _OrderCard extends StatelessWidget {
                   ),
               ],
             ),
+            if (order.status == OrderStatus.confirmed || order.status == OrderStatus.inProgress) ...[
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: () => Navigator.pushNamed(context, '/tracking', arguments: order),
+                icon: const Icon(Icons.location_on_outlined, size: 16),
+                label: const Text('Acompanhar em tempo real'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: ZeloColors.primary,
+                  side: const BorderSide(color: ZeloColors.primary),
+                  minimumSize: const Size(double.infinity, 40),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                ),
+              ),
+            ],
           ],
         ),
       ),

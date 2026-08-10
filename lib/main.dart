@@ -9,6 +9,8 @@ import 'screens/schedule_screen.dart';
 import 'screens/orders_screen.dart';
 import 'screens/map_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/tracking_screen.dart';
+import 'models/models.dart';
 import 'theme.dart';
 
 void main() async {
@@ -54,6 +56,12 @@ class ZeloApp extends StatelessWidget {
             return MaterialPageRoute(builder: (_) => const MapScreen());
           case '/profile':
             return MaterialPageRoute(builder: (_) => const ProfileScreen());
+          case '/tracking':
+            final order = settings.arguments as ServiceOrder;
+            return MaterialPageRoute(
+              builder: (_) => TrackingScreen(order: order),
+              settings: settings,
+            );
           default:
             return MaterialPageRoute(builder: (_) => const LoginScreen());
         }
