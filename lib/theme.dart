@@ -39,12 +39,12 @@ class ZeloTheme {
           style: ElevatedButton.styleFrom(
             backgroundColor: ZeloColors.primary,
             foregroundColor: Colors.white,
-            minimumSize: const Size(double.infinity, 52),
+            minimumSize: const Size(double.infinity, 56),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
             textStyle: const TextStyle(
-              fontSize: 16,
+              fontSize: 18,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -68,7 +68,7 @@ class ZeloTheme {
                 const BorderSide(color: ZeloColors.primary, width: 2),
           ),
           labelStyle:
-              const TextStyle(color: ZeloColors.textSecondary, fontSize: 14),
+              const TextStyle(color: ZeloColors.textSecondary, fontSize: 16),
         ),
         cardTheme: CardThemeData(
           color: ZeloColors.cardBg,
