@@ -17,7 +17,7 @@
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="false">
 
-        <!-- Chave do Google Maps — substitua pela sua -->
+        <!-- Chave do Google Maps (substitua pela sua) -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="SUA_GOOGLE_MAPS_API_KEY_AQUI"/>
