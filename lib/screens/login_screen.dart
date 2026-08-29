@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../models/usuario.dart';
 import '../providers/app_provider.dart';
+import '../services/api_client.dart';
 import '../theme.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -12,29 +14,62 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _nomeCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
+  final _telefoneCtrl = TextEditingController();
+  final _enderecoCtrl = TextEditingController();
   bool _obscurePassword = true;
   bool _isLoading = false;
   bool _isRegister = false;
+  TipoUsuario _tipo = TipoUsuario.CLIENTE;
 
   @override
   void dispose() {
+    _nomeCtrl.dispose();
     _emailCtrl.dispose();
     _passwordCtrl.dispose();
+    _telefoneCtrl.dispose();
+    _enderecoCtrl.dispose();
     super.dispose();
   }
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
+    final appProvider = context.read<AppProvider>();
     try {
-      await context
-          .read<AppProvider>()
-          .login(_emailCtrl.text.trim(), _passwordCtrl.text);
+      if (_isRegister) {
+        await appProvider.registrar(
+          nome: _nomeCtrl.text.trim(),
+          email: _emailCtrl.text.trim(),
+          senha: _passwordCtrl.text,
+          tipo: _tipo,
+          telefone: _telefoneCtrl.text.trim(),
+          endereco: _enderecoCtrl.text.trim(),
+        );
+      } else {
+        await appProvider.login(_emailCtrl.text.trim(), _passwordCtrl.text);
+      }
       if (mounted) {
         Navigator.of(context).pushReplacementNamed('/home');
       }
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      final msg = (e.fieldErrors != null && e.fieldErrors!.isNotEmpty)
+          ? e.fieldErrors!.values.join('\n')
+          : e.message;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(msg), backgroundColor: ZeloColors.error),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Ocorreu um erro inesperado. Tente novamente.'),
+          backgroundColor: ZeloColors.error,
+        ),
+      );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -109,6 +144,40 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 const SizedBox(height: 32),
+                if (_isRegister) ...[
+                  // Tipo de conta
+                  SegmentedButton<TipoUsuario>(
+                    segments: const [
+                      ButtonSegment(
+                        value: TipoUsuario.CLIENTE,
+                        label: Text('Cliente'),
+                        icon: Icon(Icons.person_outline),
+                      ),
+                      ButtonSegment(
+                        value: TipoUsuario.PRESTADOR,
+                        label: Text('Prestador'),
+                        icon: Icon(Icons.handyman_outlined),
+                      ),
+                    ],
+                    selected: {_tipo},
+                    onSelectionChanged: (s) => setState(() => _tipo = s.first),
+                  ),
+                  const SizedBox(height: 16),
+                  // Nome
+                  TextFormField(
+                    controller: _nomeCtrl,
+                    decoration: const InputDecoration(
+                      labelText: 'Nome completo',
+                      prefixIcon: Icon(Icons.badge_outlined),
+                    ),
+                    validator: (v) {
+                      if (!_isRegister) return null;
+                      if (v == null || v.trim().isEmpty) return 'Informe o nome';
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                ],
                 // Email
                 TextFormField(
                   controller: _emailCtrl,
@@ -147,6 +216,27 @@ class _LoginScreenState extends State<LoginScreen> {
                     return null;
                   },
                 ),
+                if (_isRegister) ...[
+                  const SizedBox(height: 16),
+                  // Telefone (opcional)
+                  TextFormField(
+                    controller: _telefoneCtrl,
+                    keyboardType: TextInputType.phone,
+                    decoration: const InputDecoration(
+                      labelText: 'Telefone (opcional)',
+                      prefixIcon: Icon(Icons.phone_outlined),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  // Endereço (opcional)
+                  TextFormField(
+                    controller: _enderecoCtrl,
+                    decoration: const InputDecoration(
+                      labelText: 'Endereço (opcional)',
+                      prefixIcon: Icon(Icons.location_on_outlined),
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 32),
                 // Botão principal
                 ElevatedButton(

@@ -244,4 +244,19 @@ class MockData {
       completedJobs: 89,
     ),
   ];
+
+  // Pedido fixo usado só para demonstrar a tela de Acompanhamento em Tempo
+  // Real (AI Logistics Extension). Endereço fictício, sem qualquer relação
+  // com geolocalização/CEP real — não deve ser confundido com um pedido de
+  // verdade.
+  static final demoOrder = ServiceOrder(
+    id: 'demo-tracking-1',
+    providerId: '1',
+    providerName: 'Maria Silva',
+    service: 'Faxina',
+    scheduledDate: DateTime(2026, 9, 1, 9, 0),
+    totalPrice: 90.0,
+    status: OrderStatus.inProgress,
+    address: 'Rua das Flores, 200 - Jardim Primavera',
+  );
 }
